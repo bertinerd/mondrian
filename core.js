@@ -77,40 +77,163 @@ function onMouseOver(currentRect){
 		// switch on rectangle type
 		actions = {
 			"E" : function(rectData){
-				rectData.newW = rectData.oldW + rectData.oldW/4,
-				rectData.newH = rectData.oldH + rectData.oldH/4,
-				rectData.newX = rectData.oldX - (rectData.newW - rectData.oldW)/2,
+				rectData.newW = rectData.oldW + rectData.oldW/4;
+				rectData.newH = rectData.oldH + rectData.oldH/4;
+				rectData.newX = rectData.oldX - (rectData.newW - rectData.oldW)/2;
 				rectData.newY = rectData.oldY - (rectData.newH - rectData.oldH)/2;
 
 				for(var i=0; i<rectangles[rectData.row][rectData.col].adj.length; i++){
-					adjustNeighbours(i, rectData);
+					var newW, newH, newX, newY, sign, neighData = neighboursData(i, rectData);
+					newW = ((i==1)||(i==6)) ? (rectData.newW) : (neighData.oldW - (rectData.newW - rectData.oldW)/2);	
+					newH = ((i==3)||(i==4))	? (rectData.newH) : (neighData.oldH - (rectData.newH - rectData.oldH)/2);
+					sign = ((i==1)||(i==6)) ? -1 : +1;
+					newX = ((i==0)||(i==3)||(i==5)) ? (neighData.oldX) : (neighData.oldX + sign*(rectData.newW - rectData.oldW)/2);
+					sign = ((i==3)||(i==4)) ? -1 : +1;
+					newY = ((i==0)||(i==1)||(i==2)) ? (neighData.oldY) : (neighData.oldY + sign*(rectData.newH - rectData.oldH)/2);
+					neighData.adjRect.transition().duration(1000).attr("width", newW).attr("height", newH).attr("x", newX).attr("y", newY);
 				}	
-
-				rectData.rectSelection
-						// .transition().duration(1000)
-						.attr("width", rectData.newW)
-						.attr("height", rectData.newH)
-						.attr("x", rectData.newX)
-						.attr("y", rectData.newY);	
+				rectData.rectSelection.transition().duration(1000).attr("width", rectData.newW).attr("height", rectData.newH).attr("x", rectData.newX).attr("y", rectData.newY);	
 			},
 
 			"A" : function(rectData){
-				rectData.newW = rectData.oldW + rectData.oldW/8,
-				rectData.newH = rectData.oldH + rectData.oldH/8,
-				rectData.newX = rectData.oldX,
+				rectData.newW = rectData.oldW + rectData.oldW/8;
+				rectData.newH = rectData.oldH + rectData.oldH/8;
+				rectData.newX = rectData.oldX;
 				rectData.newY = rectData.oldY;
 
 				for(var i=0; i<rectangles[rectData.row][rectData.col].adj.length; i++){
-					adjustNeighboursA(i, rectData);
+					var newW, newH, newX, newY, neighData = neighboursData(i, rectData);
+					newW = (i==1) ? (rectData.newW) : (neighData.oldW - (rectData.newW - rectData.oldW)/2);	
+					newH = (i==0) ? (rectData.newH) : (neighData.oldH - (rectData.newH - rectData.oldH)/2);
+					newX = (i==1) ? (neighData.oldX) : (neighData.oldX + (rectData.newW - rectData.oldW)/2);
+					newY = (i==0) ? (neighData.oldY) : (neighData.oldY + (rectData.newH - rectData.oldH)/2);
+					neighData.adjRect.transition().duration(1000).attr("width", newW).attr("height", newH).attr("x", newX).attr("y", newY);					
 				}
+				rectData.rectSelection.transition().duration(1000).attr("width", rectData.newW).attr("height", rectData.newH).attr("x", rectData.newX).attr("y", rectData.newY);		
+			},
 
-				rectData.rectSelection
-						// .transition().duration(1000)
-						.attr("width", rectData.newW)
-						.attr("height", rectData.newH)
-						.attr("x", rectData.newX)
-						.attr("y", rectData.newY);		
-			}
+			"B" : function(rectData){
+				rectData.newW = rectData.oldW + rectData.oldW/4;
+				rectData.newH = rectData.oldH + rectData.oldH/8;
+				rectData.newX = rectData.oldX - (rectData.newW - rectData.oldW)/2;
+				rectData.newY = rectData.oldY;
+
+				for(var i=0; i<rectangles[rectData.row][rectData.col].adj.length; i++){
+					var newW, newH, newX, newY, sign, neighData = neighboursData(i, rectData);
+					newW = (i==3) ? (rectData.newW) : (neighData.oldW - (rectData.newW - rectData.oldW)/2);
+					newH = ((i==0)||(i==1)) ? (rectData.newH) : (neighData.oldH - (rectData.newH - rectData.oldH)/2);
+					sign = (i==3) ? - 1 : +1;
+					newX = ((i==0)||(i==2)) ? (neighData.oldX) : (neighData.oldX + sign*(rectData.newW - rectData.oldW)/2);
+					newY = ((i==0)||(i==1)) ? (neighData.oldY) : (neighData.oldY + (rectData.newH - rectData.oldH)/2);
+					neighData.adjRect.transition().duration(1000).attr("width", newW).attr("height", newH).attr("x", newX).attr("y", newY);
+				}				
+				rectData.rectSelection.transition().duration(1000).attr("width", rectData.newW).attr("height", rectData.newH).attr("x", rectData.newX).attr("y", rectData.newY);		
+			},
+
+			"C" : function(rectData){
+				rectData.newW = rectData.oldW + rectData.oldW/8;
+				rectData.newH = rectData.oldH + rectData.oldH/8;
+				rectData.newX = rectData.oldX - (rectData.newW - rectData.oldW);
+				rectData.newY = rectData.oldY;
+
+				for(var i=0; i<rectangles[rectData.row][rectData.col].adj.length; i++){
+					var newW, newH, newX, newY, neighData = neighboursData(i, rectData);
+					newW = (i==2) ? (rectData.newW) : (neighData.oldW - (rectData.newW - rectData.oldW)/2);	
+					newH = (i==0) ? (rectData.newH) : (neighData.oldH - (rectData.newH - rectData.oldH)/2);
+					newX = (i==2) ? (rectData.newX) : (neighData.oldX - (rectData.newW - rectData.oldW)/2);
+					newY = (i==0) ? (rectData.newY) : (neighData.oldY + (rectData.newH - rectData.oldH)/2);
+					neighData.adjRect.transition().duration(1000).attr("width", newW).attr("height", newH).attr("x", newX).attr("y", newY);					
+				}
+				rectData.rectSelection.transition().duration(1000).attr("width", rectData.newW).attr("height", rectData.newH).attr("x", rectData.newX).attr("y", rectData.newY);		
+			},
+
+			"D" : function(rectData){
+				rectData.newW = rectData.oldW + rectData.oldW/8;
+				rectData.newH = rectData.oldH + rectData.oldH/4;
+				rectData.newX = rectData.oldX;
+				rectData.newY = rectData.oldY - (rectData.newH - rectData.oldH)/2;
+
+				for(var i=0; i<rectangles[rectData.row][rectData.col].adj.length; i++){
+					var newW, newH, sign, newX, newY, neighData = neighboursData(i, rectData);
+					newW = ((i==0)||(i==3)) ? (rectData.newW) : (neighData.oldW - (rectData.newW - rectData.oldW)/2);
+					newH = (i==2) ? (rectData.newH) : (neighData.oldH - (rectData.newH - rectData.oldH)/2);
+					sign = (i==2) ? -1 : +1;
+					newX = ((i==0)||(i==3)) ? (neighData.oldX) : (neighData.oldX + (rectData.newW - rectData.oldW)/2);
+					newY = ((i==0)||(i==1)) ? (neighData.oldY) : (neighData.oldY + sign*(rectData.newH - rectData.oldH)/2);
+					neighData.adjRect.transition().duration(1000).attr("width", newW).attr("height", newH).attr("x", newX).attr("y", newY);					
+				}
+				rectData.rectSelection.transition().duration(1000).attr("width", rectData.newW).attr("height", rectData.newH).attr("x", rectData.newX).attr("y", rectData.newY);		
+			},
+
+			"F" : function(rectData){
+				rectData.newW = rectData.oldW + rectData.oldW/8;
+				rectData.newH = rectData.oldH + rectData.oldH/4;
+				rectData.newX = rectData.oldX - (rectData.newW - rectData.oldW);
+				rectData.newY = rectData.oldY - (rectData.newH - rectData.oldH)/2;
+
+				for(var i=0; i<rectangles[rectData.row][rectData.col].adj.length; i++){
+					var newW, newH, sign, newX, newY, neighData = neighboursData(i, rectData);
+					newW = ((i==1)||(i==4)) ? (rectData.newW) : (neighData.oldW - (rectData.newW - rectData.oldW)/2);
+					newH = (i==2) ? (rectData.newH) : (neighData.oldH - (rectData.newH - rectData.oldH)/2);
+					sign = (i==2) ? -1 : +1;
+					newX = ((i==0)||(i==2)||(i==3)) ? (neighData.oldX) : (neighData.oldX - (rectData.newW - rectData.oldW));
+					newY = ((i==0)||(i==1)) ? (neighData.oldY) : (neighData.oldY + sign*(rectData.newH - rectData.oldH)/2);
+					neighData.adjRect.transition().duration(1000).attr("width", newW).attr("height", newH).attr("x", newX).attr("y", newY);					
+				}
+				rectData.rectSelection.transition().duration(1000).attr("width", rectData.newW).attr("height", rectData.newH).attr("x", rectData.newX).attr("y", rectData.newY);		
+			},
+
+			"G" : function(rectData){
+				rectData.newW = rectData.oldW + rectData.oldW/8;
+				rectData.newH = rectData.oldH + rectData.oldH/8;
+				rectData.newX = rectData.oldX;
+				rectData.newY = rectData.oldY - (rectData.newH - rectData.oldH);
+
+				for(var i=0; i<rectangles[rectData.row][rectData.col].adj.length; i++){
+					var newW, newH, newX, newY, neighData = neighboursData(i, rectData);
+					newW = (i==0) ? (rectData.newW) : (neighData.oldW - (rectData.newW - rectData.oldW)/2);	
+					newH = (i==2) ? (rectData.newH) : (neighData.oldH - (rectData.newH - rectData.oldH)/2);
+					newX = (i==0) ? (neighData.oldX) : (neighData.oldX + (rectData.newW - rectData.oldW)/2);
+					newY = ((i==0)||(i==1)) ? (neighData.oldY) : (neighData.oldY - (rectData.newH - rectData.oldH));
+					neighData.adjRect.transition().duration(1000).attr("width", newW).attr("height", newH).attr("x", newX).attr("y", newY);					
+				}
+				rectData.rectSelection.transition().duration(1000).attr("width", rectData.newW).attr("height", rectData.newH).attr("x", rectData.newX).attr("y", rectData.newY);		
+			},
+
+			"H" : function(rectData){
+				rectData.newW = rectData.oldW + rectData.oldW/4;
+				rectData.newH = rectData.oldH + rectData.oldH/8;
+				rectData.newX = rectData.oldX - (rectData.newW - rectData.oldW)/2;
+				rectData.newY = rectData.oldY - (rectData.newH - rectData.oldH);
+
+				for(var i=0; i<rectangles[rectData.row][rectData.col].adj.length; i++){
+					var newW, newH, newX, newY, neighData = neighboursData(i, rectData);
+					newW = (i==1) ? (rectData.newW) : (neighData.oldW - (rectData.newW - rectData.oldW)/2);	
+					newH = ((i==3)||(i==4)) ? (rectData.newH) : (neighData.oldH - (rectData.newH - rectData.oldH)/2);
+					sign = (i==1) ? -1 : +1;
+					newX = ((i==0)||(i==3)) ? (neighData.oldX) : (neighData.oldX + sign*(rectData.newW - rectData.oldW)/2);
+					newY = ((i==0)||(i==1)||(i==2)) ? (neighData.oldY) : (neighData.oldY - (rectData.newH - rectData.oldH));
+					neighData.adjRect.transition().duration(1000).attr("width", newW).attr("height", newH).attr("x", newX).attr("y", newY);					
+				}
+				rectData.rectSelection.transition().duration(1000).attr("width", rectData.newW).attr("height", rectData.newH).attr("x", rectData.newX).attr("y", rectData.newY);		
+			},
+
+			"I" : function(rectData){
+				rectData.newW = rectData.oldW + rectData.oldW/8;
+				rectData.newH = rectData.oldH + rectData.oldH/8;
+				rectData.newX = rectData.oldX - (rectData.newH - rectData.oldH)*2;
+				rectData.newY = rectData.oldY - (rectData.newH - rectData.oldH);
+
+				for(var i=0; i<rectangles[rectData.row][rectData.col].adj.length; i++){
+					var newW, newH, newX, newY, neighData = neighboursData(i, rectData);
+					newW = (i==1) ? (rectData.newW) : (neighData.oldW - (rectData.newW - rectData.oldW)/2);	
+					newH = (i==2) ? (rectData.newH) : (neighData.oldH - (rectData.newH - rectData.oldH)/2);
+					newX = ((i==0)||(i==2)) ? (neighData.oldX) : (neighData.oldX - (rectData.newW - rectData.oldW));
+					newY = ((i==0)||(i==1)) ? (neighData.oldY) : (neighData.oldY - (rectData.newH - rectData.oldH));
+					neighData.adjRect.transition().duration(1000).attr("width", newW).attr("height", newH).attr("x", newX).attr("y", newY);					
+				}
+				rectData.rectSelection.transition().duration(1000).attr("width", rectData.newW).attr("height", rectData.newH).attr("x", rectData.newX).attr("y", rectData.newY);		
+			},
 		};
 
 	rectData.rectSelection = d3.select(currentRect);	
@@ -147,52 +270,15 @@ function computeAdjacencies(row, col){
 	return adj;
 }	
 
-function adjustNeighbours(n, rectData){
+function neighboursData(n, rectData){
 	
-	var row = rectangles[rectData.row][rectData.col].adj[n].row,
-		col = rectangles[rectData.row][rectData.col].adj[n].col,
-		adjRect = rectangles[row][col].rect,
-		oldW = parseFloat(adjRect.attr("width")),
-		oldH = parseFloat(adjRect.attr("height")),
-		oldX = parseFloat(adjRect.attr("x")),
-		oldY = parseFloat(adjRect.attr("y")),
-		newW, newH, newX, newY, sign;
-
-	newW = ((n==1)||(n==6)) ? (rectData.newW) : (oldW - (rectData.newW - rectData.oldW)/2);	
-	newH = ((n==3)||(n==4))	? (rectData.newH) : (oldH - (rectData.newH - rectData.oldH)/2);
-	sign = ((n==1)||(n==6)) ? -1 : +1;
-	newX = ((n==0)||(n==3)||(n==5)) ? (oldX) : (oldX + sign*(rectData.newW - rectData.oldW)/2);
-	sign = ((n==3)||(n==4)) ? -1 : +1;
-	newY = ((n==0)||(n==1)||(n==2)) ? (oldY) : (oldY + sign*(rectData.newH - rectData.oldH)/2);
-
-	adjRect
-		   // .transition.duration(1000)
-		   .attr("width", newW)
-		   .attr("height", newH)
-		   .attr("x", newX)
-		   .attr("y", newY);
-}
-
-function adjustNeighboursA(n, rectData){
-	
-	var row = rectangles[rectData.row][rectData.col].adj[n].row,
-		col = rectangles[rectData.row][rectData.col].adj[n].col,
-		adjRect = rectangles[row][col].rect,
-		oldW = parseFloat(adjRect.attr("width")),
-		oldH = parseFloat(adjRect.attr("height")),
-		oldX = parseFloat(adjRect.attr("x")),
-		oldY = parseFloat(adjRect.attr("y")),
-		newW, newH, newX, newY, sign;
-
-	newW = (n==1) ? (oldW + (rectData.newW - rectData.oldW)/2) : (oldW - (rectData.newW - rectData.oldW)/2);	
-	newH = (n==0) ? (oldH + (rectData.newH - rectData.oldH)/2) : (oldH - (rectData.newH - rectData.oldH)/2);
-	newX = (n==1) ? (oldX) : (oldX + (rectData.newW - rectData.oldW)/2);
-	newY = (n==0) ? (oldY) : (oldY + (rectData.newH - rectData.oldH)/2);
-
-	adjRect
-		   // .transition.duration(1000)
-		   .attr("width", newW)
-		   .attr("height", newH)
-		   .attr("x", newX)
-		   .attr("y", newY);
+		var data = {}, row, col;
+		row = rectangles[rectData.row][rectData.col].adj[n].row;
+		col = rectangles[rectData.row][rectData.col].adj[n].col;
+		data.adjRect = rectangles[row][col].rect;
+		data.oldW = parseFloat(data.adjRect.attr("width"));
+		data.oldH = parseFloat(data.adjRect.attr("height"));
+		data.oldX = parseFloat(data.adjRect.attr("x"));
+		data.oldY = parseFloat(data.adjRect.attr("y"));
+		return data;
 }											
